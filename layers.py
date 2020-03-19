@@ -361,7 +361,7 @@ def trainable_initial_state(batch_size,
     else:
         flat_initializer = tuple(tf.zeros_initializer for initializer in flat_state_size)
 
-    names = ["{}_{}".format(name, i) for i in xrange(len(flat_state_size))]
+    names = ["{}_{}".format(name, i) for i in range(len(flat_state_size))]
     tiled_states = []
 
     # tiled_ta = tf.ones(shape=[batch_size])
