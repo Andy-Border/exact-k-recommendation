@@ -1,5 +1,5 @@
-from __future__ import print_function
-from hyperparams import Hyperparams as hp
+
+from src.hyperparams import Hyperparams as hp
 import tensorflow as tf
 import random
 

@@ -2,15 +2,11 @@
 
 
 import tensorflow as tf
-from tensorflow.python.ops import tensor_array_ops, control_flow_ops
 from tensorflow.contrib import rnn
-from tensorflow.contrib import layers
-from tensorflow.python.framework import tensor_util
 # from tensorflow.contrib\
 from tensorflow.python.util import nest
-import numpy as np
-from utils import index_matrix_to_pairs_fn
-from hyperparams import Hyperparams as hp
+from src.utils import index_matrix_to_pairs_fn
+from src.hyperparams import Hyperparams as hp
 
 try:
     from tensorflow.contrib.layers.python.layers import utils  # 1.0.0
@@ -302,7 +298,7 @@ def ptn_rnn_decoder(cell,
                     return output_l
 
                 # [state, state] -> [(h,c),(h,c)] -> [[h,h,h], [c,c,c]]
-                inputs_ta_flat = zip(*[nest.flatten(input_l) for input_l in inputs_l])
+                inputs_ta_flat = list(zip(*[nest.flatten(input_l) for input_l in inputs_l]))
                 # [[h,h,h], [c,c,c]] -(beam select)> [[h,h,h], [c,c,c]]
                 outputs_ta_flat = [_select(input_ta) for input_ta in inputs_ta_flat]
                 # [[h,h,h], [c,c,c]] -> [(h,c),(h,c)] -> [state, state]
@@ -323,7 +319,7 @@ def ptn_rnn_decoder(cell,
                                 for t in output_idx]
                 if pre_output_idxs is not None:
                     pre_output_idxs = beam_select(pre_output_idxs, last_beam_id)
-                    output_idxs = map(lambda ts: tf.concat(ts, axis=1), zip(pre_output_idxs, l_output_idx))
+                    output_idxs = [tf.concat(ts, axis=1) for ts in zip(pre_output_idxs, l_output_idx)]
                 else:
                     output_idxs = l_output_idx
                 return accum_logits, point_mask, state, output_idx, output_idxs
@@ -339,8 +335,8 @@ def ptn_rnn_decoder(cell,
             accum_logits, point_mask, state, output_idx, output_idxs = \
                 beam_sample(accum_logits, logits, point_mask, state, None)
             for i in range(1, res_length):
-                logits, state = zip(*[call_cell(output_idx[ik], state[ik], point_mask[ik])  # [batch_size, data_len]
-                                      for ik in range(beam_size)])
+                logits, state = list(zip(*[call_cell(output_idx[ik], state[ik], point_mask[ik])  # [batch_size, data_len]
+                                      for ik in range(beam_size)]))
                 # logits -> log pi
                 logits = [logit_ - tf.reduce_logsumexp(logit_, axis=1, keep_dims=True) for logit_ in logits]
                 accum_logits, point_mask, state, output_idx, output_idxs = \

@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 #/usr/bin/python2
 
-from __future__ import print_function
-import tensorflow as tf
 
-from layers import *
-from hyperparams import Hyperparams as hp
-from data_load_ml import *
-from modules import *
-import os, codecs
-from tqdm import tqdm
-from utils import *
-from model import Generator, Discriminator
+
+from src.data_load_ml import *
+import os
+from src.utils import *
+from src.model import Generator, Discriminator
 
 
 if __name__ == '__main__':
@@ -44,13 +39,13 @@ if __name__ == '__main__':
     item2idx, idx2item = load_item_vocab()
 
     # log file init
-    gen_train_log = open(os.path.join(hp.logdir, hp.gen_train_log_path), 'w')
+    gen_train_log = open('../{}{}'.format(hp.logdir,hp.gen_train_log_path), 'w')
     gen_train_log.write('step\tgen_reward\tprecision@4\tprecision\n')
-    gen_test_log = open(os.path.join(hp.logdir, hp.gen_test_log_path), 'w')
+    gen_test_log = open('../{}{}'.format(hp.logdir, hp.gen_test_log_path), 'w')
     gen_test_log.write('step\tgen_reward\tprecision@4\tprecision\n')
-    dis_train_log = open(os.path.join(hp.logdir, hp.dis_train_log_path), 'w')
+    dis_train_log = open('../{}{}'.format(hp.logdir, hp.dis_train_log_path), 'w')
     dis_train_log.write('step\tdis_loss\tdis_acc\n')
-    dis_test_log = open(os.path.join(hp.logdir, hp.dis_test_log_path), 'w')
+    dis_test_log = open('../{}{}'.format(hp.logdir, hp.dis_test_log_path), 'w')
     dis_test_log.write('step\tdis_loss\tdis_acc\n')
 
     # Start session
@@ -160,7 +155,7 @@ if __name__ == '__main__':
                                 memory_reward[user[i]] = sorted_list[0][2]
                                 memory_card_idx[user[i]] = sorted_list[0][1]
                                 memory_card[user[i]] = sorted_list[0][0]
-                    (sampled_card, sampled_card_idx, reward) = zip(*samples)
+                    (sampled_card, sampled_card_idx, reward) = list(zip(*samples))
                 else:
                     # sample
                     sampled_card_idx, sampled_card = sess.run([g.sampled_path, g.sampled_result],

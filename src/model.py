@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 #/usr/bin/python2
 
-from __future__ import print_function
-import tensorflow as tf
 
-from layers import *
-from hyperparams import Hyperparams as hp
-from data_load_ml import *
-from modules import *
-from utils import *
+
+from src.layers import *
+from src.data_load_ml import *
+from src.modules import *
+from src.utils import *
 
 
 class Generator():
